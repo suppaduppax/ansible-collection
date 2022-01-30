@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+auto {{ interfaces.iface }}
+allow-hotplug {{ interfaces.iface }}
+iface {{ interfaces.iface }} inet dhcp

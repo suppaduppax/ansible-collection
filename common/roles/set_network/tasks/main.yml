@@ -1,0 +1,5 @@
+---
+# tasks file for set_network
+- name: Include distribution specific tasks to set network
+  include_tasks:
+    file: "{{ set_network_distribution | default(ansible_distribution) | lower }}_setup.yml"

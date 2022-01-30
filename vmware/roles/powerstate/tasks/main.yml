@@ -1,0 +1,19 @@
+- name: Only allow vm_center_managed
+  fail:
+    msg: "vm_vcenter_managed must be true and vCenter must be up and running."
+  when: vm_vcenter_managed is undefined or vm_vcenter_managed == False
+
+- name: Set virtual machine powerstate (vcenter)
+  when:
+    - vm_vcenter_managed is defined
+    - vm_vcenter_managed == True
+  community.vmware.vmware_guest_powerstate:
+    hostname: "{{ vcenter_hostname | mandatory }}"
+    username: "{{ vcenter_username | mandatory }}"
+    password: "{{ vcenter_password | mandatory }}"
+    name: "{{ vm_name | mandatory }}"
+    validate_certs: "{{ vcenter_validate_certs | default(False) }}"
+    folder: "{{ vm_vcenter_path | default( '/' + vcenter_datacenter + '/' + (vm_folder | default('')) + '/vm') }}"
+    state: "{{ vm_state | default('present') }}"
+  register: powerstate_vm
+

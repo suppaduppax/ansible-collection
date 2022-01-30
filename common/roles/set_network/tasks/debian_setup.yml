@@ -1,0 +1,25 @@
+---
+- name: Configure /etc/network/interfaces
+  become: true
+  template:
+    src: "interfaces.d.j2"
+    dest: "/etc/network/interfaces"
+  register: set_network_interfaces_result
+
+- name: Create /etc/network/interfaces.d looback
+  become: true
+  template:
+    src: "interfaces.d_loopback.j2"
+    dest: "/etc/network/interfaces.d/lo"
+  register: set_network_interfaces_result
+
+- name: Create /etc/network/interfaces.d default interface
+  become: true
+  template:
+    src: "interfaces.d_{{ 'dhcp' if dhcp_enabled else 'static' }}.j2"
+    dest: "/etc/network/interfaces.d/{{ interfaces.iface }}"
+  register: set_network_interfaces_result
+
+- name: Set set_network_result fact
+  set_fact:
+    set_network_result: "{{ set_network_interfaces_result }}"

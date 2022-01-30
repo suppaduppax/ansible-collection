@@ -1,0 +1,6 @@
+- name: Set esxi hostname
+  command:
+    cmd: "esxcli system hostname set --host {{ hostname }} --domain {{ domain }}"
+  vars:
+    ansible_user: "{{ esxi_username }}"
+    ansible_password: "{{ esxi_password }}"

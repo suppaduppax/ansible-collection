@@ -1,0 +1,9 @@
+---
+# tasks file for set_hostname
+- name: Import os specific configuration for hostname change
+  include_tasks: "{{ lookup('first_found', hostname_os_files) }}"
+  vars:
+    hostname_os_files:
+      - "{{ hostname_os | default('default') }}.yml"
+      - default.yml
+

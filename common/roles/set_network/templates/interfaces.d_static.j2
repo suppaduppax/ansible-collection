@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+auto {{ interfaces.iface }}
+allow-hotplug {{ interfaces.iface }}
+iface {{ interfaces.iface }} inet static
+  address {{ interfaces.address }}
+  gateway {{ interfaces.gateway }}
+  netmask {{ interfaces.netmask | default("255.255.255.0") }}

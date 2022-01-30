@@ -1,0 +1,78 @@
+- name: Create virtual machine (vcenter)
+  delegate_to: localhost
+  when:
+    - vm_vcenter_managed is defined
+    - vm_vcenter_managed == True
+  vmware_guest:
+    hostname: "{{ vcenter_hostname | mandatory }}"
+    username: "{{ vcenter_username | mandatory }}"
+    password: "{{ vcenter_password | mandatory }}"
+    datacenter: "{{ vcenter_datacenter | mandatory }}"
+    validate_certs: "{{ vcenter_validate_certs | default(False) }}"
+    template: "{{ vm_template | default(omit) }}"
+    folder: "{{ vm_vcenter_path | default( vcenter_datacenter + '/' + (vm_folder | default('')) + '/vm' ) }}"
+    name: "{{ vm_name | mandatory }}"
+    state: "{{ vm_state | default('poweredon') }}"
+    guest_id: "{{ vm_os | mandatory }}"
+    esxi_hostname: "{{ esxi_hostname | mandatory }}"
+    disk:
+    - size_gb: "{{ vm_disk_size_gb | default(8) }}"
+      type: "{{ vm_disk_type }}"
+      datastore: "{{ vm_datastore | mandatory }}"
+    hardware:
+      memory_mb: "{{ vm_memory_mb | default(2048) }}"
+      memory_reservation_lock: "{{ vm_memory_reservation | default(False) }}"
+      mem_reservation: "{{ vm_memory_reservation_mb | default(vm_memory_mb) }}"
+      num_cpus: "{{ vm_num_cpus | default(1) }}"
+      scsi: "{{ vm_scsi | default(omit) }}"
+    networks:
+    - name: "{{ vm_network | default('VM Network') }}"
+      device_type: "{{ vm_network_device | default('vmxnet3') }}"
+    cdrom:
+      - controller_number: 0
+        unit_number: 0
+        state: present
+        type: iso
+        iso_path: "{{ vm_iso | mandatory }}"
+  register: deploy_vm
+
+- name: Create virtual machine (esxi)
+  when: vm_vcenter_managed | default(False) == False
+  vmware_guest:
+    hostname: "{{ esxi_hostname | mandatory }}"
+    username: "{{ esxi_username | mandatory }}"
+    password: "{{ esxi_password | mandatory }}"
+    datacenter: "ha-datacenter"
+    validate_certs: no
+    folder: "{{ vm_esxi_path }}"
+    name: "{{ vm_name }}"
+    state: "{{ vm_state }}"
+    guest_id: "{{ vm_os }}"
+    esxi_hostname: "{{ esxi_hostname }}"
+    disk:
+    - size_gb: "{{ vm_disk_size_gb }}"
+      type: "{{ vm_disk_type }}"
+      datastore: "{{ vm_datastore }}"
+    hardware:
+      memory_mb: "{{ vm_memory_mb }}"
+      memory_reservation_lock: "{{ vm_memory_reservation | defailt(False) }}"
+      mem_reservation: "{{ vm_memory_reservation_mb | default(vm_memory_mb) }}"
+      num_cpus: "{{ vm_num_cpus }}"
+      scsi: "{{ vm_scsi }}"
+    networks:
+    - name: "{{ vm_network | default('VM Network') }}"
+      device_type: "{{ vm_network_device | default('vmxnet3') }}"
+    cdrom:
+      - controller_number: 0
+        unit_number: 0
+        state: present
+        type: iso
+        iso_path: "{{ vm_iso | mandatory }}"
+  register: deploy_vm
+
+- name: Debug deployed vm
+  when:
+    - create_vm_debug | default(False) == True
+  debug:
+    var: deploy_vm
+
