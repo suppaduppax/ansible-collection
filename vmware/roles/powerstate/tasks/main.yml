@@ -1,12 +1,5 @@
-- name: Only allow vm_center_managed
-  fail:
-    msg: "vm_vcenter_managed must be true and vCenter must be up and running."
-  when: vm_vcenter_managed is undefined or vm_vcenter_managed == False
-
 - name: Set virtual machine powerstate (vcenter)
   when:
-    - vm_vcenter_managed is defined
-    - vm_vcenter_managed == True
   community.vmware.vmware_guest_powerstate:
     hostname: "{{ vcenter_hostname | mandatory }}"
     username: "{{ vcenter_username | mandatory }}"
