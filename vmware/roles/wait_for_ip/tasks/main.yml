@@ -1,0 +1,18 @@
+---
+- name: Wait for vm to get an ip address
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: "{{ vm_name }}"
+    schema: "vsphere"
+    properties: guest.net
+    validate_certs: no
+  register: info
+  until:
+    - info.instance.guest.net is defined
+    - info.instance.guest.net[0].ipAddress is defined
+    - info.instance.guest.net[0].ipAddress != ""
+  retries: 30  
+  delay: 15
