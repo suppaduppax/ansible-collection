@@ -6,7 +6,7 @@
     password: "{{ vcenter_password | mandatory }}"
     name: "{{ vm_name | mandatory }}"
     validate_certs: "{{ vcenter_validate_certs | default(False) }}"
-    folder: "{{ vm_vcenter_path | default( '/' + vcenter_datacenter + '/' + (vm_folder | default('')) + '/vm') }}"
+    folder: "{{ vm_vcenter_path | default( '/' + vcenter_datacenter + '/vm/' + (vm_folder | default(''))) }}"
     state: "{{ vm_state | default('present') }}"
   register: powerstate_vm
 
