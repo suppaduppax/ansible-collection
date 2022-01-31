@@ -10,7 +10,7 @@
     password: "{{ vcenter_password | mandatory }}"
     datacenter: "{{ vcenter_datacenter | mandatory }}"
     validate_certs: "{{ vcenter_validate_certs | default(False) }}"
-    folder: "{{ vcenter_path | default( vcenter_datacenter + '/' + (vcenter_folder | default('')) + '/vm' ) }}"
+    folder: "{{ vcenter_path | default( vcenter_datacenter + '/vm/' + (vcenter_folder | default(''))) }}"
     name: "{{ template.inventory_hostname | mandatory }}"
     state: "poweredon"
     guest_id: "otherLinux64Guest"
