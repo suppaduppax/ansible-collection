@@ -18,4 +18,4 @@
   delay: 15
 
 - debug:
-    msg: "ipAddress for '{{ vm_name }}': {{ info.instance.guest.bef[0].ipAddress }}"
+    msg: "ipAddress for '{{ vm_name }}': {{ info.instance.guest.net[0].ipAddress }}"
